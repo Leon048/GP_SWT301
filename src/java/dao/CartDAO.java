@@ -20,7 +20,8 @@ import java.sql.SQLException;
  */
 public class CartDAO {
 
-    public boolean addToCart(int userId, int productId) {
+
+public boolean addToCart(int userId, int productId) throws Exception {
         String getStockSql = "SELECT StockQuantity FROM Products WHERE ProductID = ?";
         String getCartQuantitySql = "SELECT Quantity FROM Cart WHERE UserID = ? AND ProductID = ?";
         String updateCartSql = "UPDATE Cart SET Quantity = Quantity + 1 WHERE UserID = ? AND ProductID = ?";
@@ -30,7 +31,6 @@ public class CartDAO {
             int stockQuantity = 0;
             int cartQuantity = 0;
 
-          
             try (PreparedStatement ps = conn.prepareStatement(getStockSql)) {
                 ps.setInt(1, productId);
                 ResultSet rs = ps.executeQuery();
@@ -39,14 +39,12 @@ public class CartDAO {
                 }
             }
 
-            
             try (PreparedStatement ps = conn.prepareStatement(getCartQuantitySql)) {
                 ps.setInt(1, userId);
                 ps.setInt(2, productId);
                 ResultSet rs = ps.executeQuery();
                 if (rs.next()) {
                     cartQuantity = rs.getInt("Quantity");
-
                     if (cartQuantity < stockQuantity) {
                         try (PreparedStatement psUpdate = conn.prepareStatement(updateCartSql)) {
                             psUpdate.setInt(1, userId);
@@ -54,7 +52,7 @@ public class CartDAO {
                             return psUpdate.executeUpdate() > 0;
                         }
                     } else {
-                        return false; 
+                        return false;
                     }
                 } else {
                     if (stockQuantity > 0) {
@@ -64,14 +62,11 @@ public class CartDAO {
                             return psInsert.executeUpdate() > 0;
                         }
                     } else {
-                        return false; 
+                        return false;
                     }
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-        return false;
     }
 
     public List<CartDTO> getCartByUser(int userID) {
@@ -214,3 +209,4 @@ public class CartDAO {
     }
 
 }
+

@@ -132,6 +132,7 @@ public class ProductDAO {
         return list;
     }
 
+
     public int getTotalFilteredCount(String name, String category) {
         int total = 0;
         String sql = "SELECT COUNT(*) FROM Products WHERE isDelete = 0";
